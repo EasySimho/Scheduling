@@ -11,22 +11,31 @@ namespace Scheduling
     {
         private string _id;
         private int _time;
-        private string _politic;
-        private bool _priority;
+        private string _filext;
 
-        public Job(string _idjob, int _timejob, string _politicjob, bool _priority)
+        public Job(string _idjob, string _filextjob, int _timejob)
         {
             this._id = _idjob;
             this._time  = _timejob;
-            this._politic = _politicjob;
-            this._priority = _priority;
+            this._filext = _filextjob;
         }
 
         override public string ToString()
         {
-            string output = $"ID: {this._id} || TIME: {this._time}ms || POLITIC: {this._politic} || PRIORITY: {this._priority}";
+            string output = $"    ID: {this._id}{this._filext}    ||   TIME: {this._time}ms";
 
             return output;
+        }
+
+        public int getTime()
+        {
+            this._time = _time;
+            return _time;
+        }
+
+        public void setTime(int remainingTime)
+        {
+            this._time = remainingTime;
         }
     }
 }
