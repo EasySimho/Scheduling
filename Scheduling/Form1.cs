@@ -72,8 +72,8 @@ namespace Scheduling
                 throw new Exception("metti una politica");
             }
 
-           
-            
+
+
 
         }
 
@@ -107,6 +107,7 @@ namespace Scheduling
                     listBox1.Items.Add(jobs[minIndex].ToString() + " ---------esecuzionato---------");
                     jobs.RemoveAt(minIndex);
                 }
+
             }
             listBox1.Cursor = Cursors.Default;
         }
@@ -150,7 +151,8 @@ namespace Scheduling
                     currentJob.setTime(0);
                     listBox1.Items.Add(currentJob.ToString() + " ---------esecuzionato---------");
                 }
-              Application.DoEvents();
+                
+                Application.DoEvents();
               Thread.Sleep(20);
               sliceCounter++;
               progressBar1.PerformStep();
