@@ -82,16 +82,20 @@ namespace Scheduling
             listBox1.Cursor = Cursors.WaitCursor;
             foreach (Job job in jobs)
             {
-                listBox1.Items.Add(job.ToString() + " ---------esecuzionato---------");
+                listBox1.Items.Add(job.ToString() + "  Executed");
             }
             jobs.Clear();
             listBox1.Cursor = Cursors.Default;
         }
+
+
+
         private void shortestJobFirst()
         {
             listBox1.Cursor = Cursors.WaitCursor;
             while (jobs.Count > 0)
             {
+                
                 int minTime = int.MaxValue;
                 int minIndex = -1;
                 for (int i = 0; i < jobs.Count; i++)
@@ -100,13 +104,13 @@ namespace Scheduling
                     {
                         minTime = jobs[i].getTime();
                         minIndex = i;
+
                     }
+                    
                 }
-                if (minIndex != -1)
-                {
-                    listBox1.Items.Add(jobs[minIndex].ToString() + " ---------esecuzionato---------");
+                listBox1.Items.Add(jobs[minIndex].ToString() + "  Executed");
                     jobs.RemoveAt(minIndex);
-                }
+
 
             }
             listBox1.Cursor = Cursors.Default;
@@ -132,12 +136,10 @@ namespace Scheduling
             {
                 
                 Job currentJob = readyQueue.Dequeue();
-
+                listBox1.Items.Add(currentJob.ToString() + "  Started");
                 int executionTime = Math.Min(sliceTempo, currentJob.getTime());
 
 
-
-                listBox1.Items.Add(currentJob.ToString() + "  Queuing");
                 
                 int remainingTime = currentJob.getTime() - executionTime;
 
@@ -145,11 +147,13 @@ namespace Scheduling
                 {
                     currentJob.setTime(remainingTime);
                     readyQueue.Enqueue(currentJob);
+                    listBox1.Items.Add(currentJob.ToString() + "  Stopped");
+
                 }
                 else
                 {
                     currentJob.setTime(0);
-                    listBox1.Items.Add(currentJob.ToString() + " ---------esecuzionato---------");
+                    listBox1.Items.Add(currentJob.ToString() + "  Executed");
                 }
                 
                 Application.DoEvents();
