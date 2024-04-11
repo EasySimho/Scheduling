@@ -32,7 +32,7 @@ namespace Scheduling
             }
             catch
             {
-                throw new Exception("parametri mancanti");
+                throw new Exception("Check Job's Parameters");
             }
 
 
@@ -72,10 +72,15 @@ namespace Scheduling
                 roundRobin();
                 label1.Text = "All Process Compleated";
             }
+            else if (SchedulingSelector.SelectedIndex == 3)
+            {
+                limitedRoundRobin();
+                label1.Text = "All Process Compleated";
+            }
             else
             {
                 label1.Text = "ERROR";
-                throw new Exception("metti una politica");
+                throw new Exception("Select a Politic");
 
             }
 
@@ -200,8 +205,83 @@ namespace Scheduling
             }
         }
 
+        private void limitedRoundRobin()
+        {
+            int maxSlicesPerJob = Convert.ToInt16(maxTimeSlices.Text);
+            Screen.Cursor = Cursors.WaitCursor;
+
+            int sliceTempo = 20;
+            Queue<Job> readyQueue = new Queue<Job>(jobs);
+            Queue<Job> waitingQueue = new Queue<Job>();
+            int sliceCounter = 0;
+            int executionFinalTime = 0;
+
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                executionFinalTime += jobs[i].getTime();
+            }
+
+            ProgressBar.Maximum = executionFinalTime;
+            ProgressBar.Step = 20;
+
+            while (readyQueue.Count > 0 || waitingQueue.Count > 0) 
+            {
+                if (readyQueue.Count > 0)
+                {
+                    Job currentJob = readyQueue.Dequeue();
+                    Screen.Items.Add(currentJob.ToString() + " Started");
+
+                    
+
+                    int executionTime = Math.Min(sliceTempo, currentJob.getTime());
+                    int remainingTime = currentJob.getTime() - executionTime;
+                    int jobslices = remainingTime / 20;
+                    if (remainingTime > 0)
+                    {
+                        
+                        currentJob.usedSlices++;
+
+                        if (currentJob.usedSlices < maxSlicesPerJob)
+                        {
+                            
+                            currentJob.setTime(remainingTime);
+                            readyQueue.Enqueue(currentJob);
+                        }
+                        else
+                        {
+                            currentJob.setTime(remainingTime);
+                            waitingQueue.Enqueue(currentJob);
+                        }
+
+                        Screen.Items.Add(currentJob.ToString() + " Stopped (" + jobslices + " slices remaining)");
+                    }
+                    else
+                    {
+                        currentJob.setTime(0);
+                        Screen.Items.Add(currentJob.ToString() + " Executed");
+                    }
+                }
+                else 
+                {
+                    if (waitingQueue.Count > 0)
+                    {
+                        readyQueue.Enqueue(waitingQueue.Dequeue());
+                    }
+                }
+
+                Application.DoEvents();
+                Thread.Sleep(20);
+                sliceCounter++;
+                ProgressBar.PerformStep();
+            }
+
+            Screen.Items.Add("ALL PROCESS COMPLEATED IN " + sliceCounter + " SLICE");
+            Screen.Cursor = Cursors.Default;
+        }
+
         public bool firstclicked = false; 
         public bool secondclicked = false;
+        public bool thirdclicked = false;
 
         private void textResetName(object sender, EventArgs e)
         {
@@ -219,6 +299,21 @@ namespace Scheduling
                 TimeInput.Text = "";
                 secondclicked = true;
             }
+        }
+
+        private void SlicesTextClicked(object sender, EventArgs e)
+        {
+            if (!thirdclicked)
+            {
+                maxTimeSlices.Text = "";
+                thirdclicked = true;
+            }
+        }
+
+        private void maxSlicesVisibility(object sender, EventArgs e)
+        {
+            if(SchedulingSelector.SelectedIndex == 3) { maxTimeSlices.Visible = true; }
+            else { maxTimeSlices.Visible = false; }
         }
     }
 }

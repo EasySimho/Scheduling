@@ -6,6 +6,7 @@
         private string _id;
         private int _time;
         private string _filext;
+        public int usedSlices = 0;
 
         public Job(string _idjob, string _filextjob, int _timejob)
         {

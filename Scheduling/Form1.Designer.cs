@@ -38,32 +38,33 @@
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
             this.Screen = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.maxTimeSlices = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // textBox1
+            // NameInput
             // 
             this.NameInput.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.NameInput.Location = new System.Drawing.Point(6, 57);
-            this.NameInput.Name = "textBox1";
+            this.NameInput.Name = "NameInput";
             this.NameInput.Size = new System.Drawing.Size(100, 23);
             this.NameInput.TabIndex = 1;
             this.NameInput.Text = "Name";
             this.NameInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.NameInput.TextChanged += new System.EventHandler(this.textResetName);
             // 
-            // textBox2
+            // TimeInput
             // 
             this.TimeInput.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TimeInput.Location = new System.Drawing.Point(6, 98);
-            this.TimeInput.Name = "textBox2";
+            this.TimeInput.Name = "TimeInput";
             this.TimeInput.Size = new System.Drawing.Size(100, 23);
             this.TimeInput.TabIndex = 3;
             this.TimeInput.Text = "Time";
             this.TimeInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.TimeInput.TextChanged += new System.EventHandler(this.textResetTime);
             // 
-            // comboBox1
+            // SchedulingSelector
             // 
             this.SchedulingSelector.DropDownHeight = 120;
             this.SchedulingSelector.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -72,12 +73,14 @@
             this.SchedulingSelector.Items.AddRange(new object[] {
             "FCFS",
             "SJF",
-            "Round Robin"});
+            "Round Robin",
+            "Limited Round Robin"});
             this.SchedulingSelector.Location = new System.Drawing.Point(987, 186);
-            this.SchedulingSelector.Name = "comboBox1";
+            this.SchedulingSelector.Name = "SchedulingSelector";
             this.SchedulingSelector.Size = new System.Drawing.Size(160, 26);
             this.SchedulingSelector.TabIndex = 5;
             this.SchedulingSelector.Text = "Scheduling Mode";
+            this.SchedulingSelector.SelectedIndexChanged += new System.EventHandler(this.maxSlicesVisibility);
             // 
             // button1
             // 
@@ -106,7 +109,7 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.startProcessing);
             // 
-            // comboBox2
+            // ExtensionSelector
             // 
             this.ExtensionSelector.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ExtensionSelector.FormattingEnabled = true;
@@ -117,7 +120,7 @@
             ".sys",
             ".dll"});
             this.ExtensionSelector.Location = new System.Drawing.Point(131, 56);
-            this.ExtensionSelector.Name = "comboBox2";
+            this.ExtensionSelector.Name = "ExtensionSelector";
             this.ExtensionSelector.Size = new System.Drawing.Size(81, 24);
             this.ExtensionSelector.TabIndex = 9;
             this.ExtensionSelector.Text = "Extension";
@@ -136,22 +139,22 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Process Add";
             // 
-            // progressBar1
+            // ProgressBar
             // 
             this.ProgressBar.Location = new System.Drawing.Point(12, 625);
-            this.ProgressBar.Name = "progressBar1";
+            this.ProgressBar.Name = "ProgressBar";
             this.ProgressBar.Size = new System.Drawing.Size(1135, 35);
             this.ProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.ProgressBar.TabIndex = 11;
             // 
-            // listBox1
+            // Screen
             // 
             this.Screen.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Screen.Font = new System.Drawing.Font("Segoe UI Variable Small Semibol", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Screen.FormattingEnabled = true;
             this.Screen.ItemHeight = 17;
             this.Screen.Location = new System.Drawing.Point(12, 258);
-            this.Screen.Name = "listBox1";
+            this.Screen.Name = "Screen";
             this.Screen.Size = new System.Drawing.Size(1135, 342);
             this.Screen.TabIndex = 12;
             // 
@@ -168,12 +171,26 @@
             this.label1.Text = "Scheduling Project";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // maxTimeSlices
+            // 
+            this.maxTimeSlices.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.maxTimeSlices.Location = new System.Drawing.Point(888, 186);
+            this.maxTimeSlices.MinimumSize = new System.Drawing.Size(4, 26);
+            this.maxTimeSlices.Name = "maxTimeSlices";
+            this.maxTimeSlices.Size = new System.Drawing.Size(93, 22);
+            this.maxTimeSlices.TabIndex = 14;
+            this.maxTimeSlices.Text = "Max Slices";
+            this.maxTimeSlices.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.maxTimeSlices.Visible = false;
+            this.maxTimeSlices.TextChanged += new System.EventHandler(this.SlicesTextClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1159, 672);
+            this.Controls.Add(this.maxTimeSlices);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Screen);
             this.Controls.Add(this.ProgressBar);
@@ -201,6 +218,7 @@
         private System.Windows.Forms.ProgressBar ProgressBar;
         private System.Windows.Forms.ListBox Screen;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox maxTimeSlices;
     }
 }
 
