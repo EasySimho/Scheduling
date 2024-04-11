@@ -28,56 +28,56 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.NameInput = new System.Windows.Forms.TextBox();
+            this.TimeInput = new System.Windows.Forms.TextBox();
+            this.SchedulingSelector = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.ExtensionSelector = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.ProgressBar = new System.Windows.Forms.ProgressBar();
+            this.Screen = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
             // 
-            this.textBox1.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(6, 57);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "Name";
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.NameInput.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NameInput.Location = new System.Drawing.Point(6, 57);
+            this.NameInput.Name = "textBox1";
+            this.NameInput.Size = new System.Drawing.Size(100, 23);
+            this.NameInput.TabIndex = 1;
+            this.NameInput.Text = "Name";
+            this.NameInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.NameInput.TextChanged += new System.EventHandler(this.textResetName);
             // 
             // textBox2
             // 
-            this.textBox2.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(6, 98);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 23);
-            this.textBox2.TabIndex = 3;
-            this.textBox2.Text = "Time";
-            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            this.TimeInput.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TimeInput.Location = new System.Drawing.Point(6, 98);
+            this.TimeInput.Name = "textBox2";
+            this.TimeInput.Size = new System.Drawing.Size(100, 23);
+            this.TimeInput.TabIndex = 3;
+            this.TimeInput.Text = "Time";
+            this.TimeInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TimeInput.TextChanged += new System.EventHandler(this.textResetTime);
             // 
             // comboBox1
             // 
-            this.comboBox1.DropDownHeight = 120;
-            this.comboBox1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IntegralHeight = false;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.SchedulingSelector.DropDownHeight = 120;
+            this.SchedulingSelector.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SchedulingSelector.FormattingEnabled = true;
+            this.SchedulingSelector.IntegralHeight = false;
+            this.SchedulingSelector.Items.AddRange(new object[] {
             "FCFS",
             "SJF",
             "Round Robin"});
-            this.comboBox1.Location = new System.Drawing.Point(987, 186);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(160, 26);
-            this.comboBox1.TabIndex = 5;
-            this.comboBox1.Text = "Scheduling Mode";
+            this.SchedulingSelector.Location = new System.Drawing.Point(987, 186);
+            this.SchedulingSelector.Name = "comboBox1";
+            this.SchedulingSelector.Size = new System.Drawing.Size(160, 26);
+            this.SchedulingSelector.TabIndex = 5;
+            this.SchedulingSelector.Text = "Scheduling Mode";
             // 
             // button1
             // 
@@ -92,7 +92,7 @@
             this.button1.TabIndex = 6;
             this.button1.Text = "Add Job";
             this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.addJob);
             // 
             // button2
             // 
@@ -104,30 +104,29 @@
             this.button2.TabIndex = 7;
             this.button2.Text = "esegui";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.startProcessing);
             // 
             // comboBox2
             // 
-            this.comboBox2.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.ExtensionSelector.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ExtensionSelector.FormattingEnabled = true;
+            this.ExtensionSelector.Items.AddRange(new object[] {
             ".exe",
             ".msi",
             ".bat",
             ".sys",
-            ".dll",
-            ".aat"});
-            this.comboBox2.Location = new System.Drawing.Point(131, 56);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(81, 24);
-            this.comboBox2.TabIndex = 9;
-            this.comboBox2.Text = "Extension";
+            ".dll"});
+            this.ExtensionSelector.Location = new System.Drawing.Point(131, 56);
+            this.ExtensionSelector.Name = "comboBox2";
+            this.ExtensionSelector.Size = new System.Drawing.Size(81, 24);
+            this.ExtensionSelector.TabIndex = 9;
+            this.ExtensionSelector.Text = "Extension";
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBox1);
-            this.groupBox1.Controls.Add(this.comboBox2);
-            this.groupBox1.Controls.Add(this.textBox2);
+            this.groupBox1.Controls.Add(this.NameInput);
+            this.groupBox1.Controls.Add(this.ExtensionSelector);
+            this.groupBox1.Controls.Add(this.TimeInput);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(12, 33);
@@ -139,22 +138,22 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 625);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(1135, 35);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar1.TabIndex = 11;
+            this.ProgressBar.Location = new System.Drawing.Point(12, 625);
+            this.ProgressBar.Name = "progressBar1";
+            this.ProgressBar.Size = new System.Drawing.Size(1135, 35);
+            this.ProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.ProgressBar.TabIndex = 11;
             // 
             // listBox1
             // 
-            this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listBox1.Font = new System.Drawing.Font("Segoe UI Variable Small Semibol", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 17;
-            this.listBox1.Location = new System.Drawing.Point(12, 258);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(1135, 342);
-            this.listBox1.TabIndex = 12;
+            this.Screen.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Screen.Font = new System.Drawing.Font("Segoe UI Variable Small Semibol", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Screen.FormattingEnabled = true;
+            this.Screen.ItemHeight = 17;
+            this.Screen.Location = new System.Drawing.Point(12, 258);
+            this.Screen.Name = "listBox1";
+            this.Screen.Size = new System.Drawing.Size(1135, 342);
+            this.Screen.TabIndex = 12;
             // 
             // label1
             // 
@@ -176,11 +175,11 @@
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1159, 672);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.Screen);
+            this.Controls.Add(this.ProgressBar);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.SchedulingSelector);
             this.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "Form1";
             this.Text = "Form1";
@@ -192,15 +191,15 @@
         }
 
         #endregion
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TextBox NameInput;
+        private System.Windows.Forms.TextBox TimeInput;
+        private System.Windows.Forms.ComboBox SchedulingSelector;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox ExtensionSelector;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ProgressBar ProgressBar;
+        private System.Windows.Forms.ListBox Screen;
         private System.Windows.Forms.Label label1;
     }
 }

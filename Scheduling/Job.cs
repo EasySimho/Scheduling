@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Scheduling
+﻿namespace Scheduling
 {
-    
+
     public class Job
     {
         private string _id;
@@ -16,7 +10,7 @@ namespace Scheduling
         public Job(string _idjob, string _filextjob, int _timejob)
         {
             this._id = _idjob;
-            this._time  = _timejob;
+            this._time = _timejob;
             this._filext = _filextjob;
         }
 

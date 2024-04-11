@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Drawing.Text;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Scheduling
@@ -15,61 +9,74 @@ namespace Scheduling
 
     public partial class Form1 : Form
     {
-        
+
         byte i = 0;
         List<Job> jobs = new List<Job>();
 
-        
+
 
         public Form1()
         {
             InitializeComponent();
         }
 
-        
 
-        private void button1_Click(object sender, EventArgs e)
+        
+        private void addJob(object sender, EventArgs e)
         {
             try
             {
-                jobs.Add(new Job(textBox1.Text, comboBox2.SelectedItem.ToString(), Convert.ToInt16(textBox2.Text)));
+                jobs.Add(new Job(NameInput.Text, ExtensionSelector.SelectedItem.ToString(), Convert.ToInt16(TimeInput.Text)));
 
-                
+
             }
-            catch 
+            catch
             {
                 throw new Exception("parametri mancanti");
             }
-            
 
-            listBox1.Items.Add(i  + " || " + jobs[i].ToString());
+
+            Screen.Items.Add(i + " || " + jobs[i].ToString());
 
             Application.DoEvents();
-            Thread.Sleep(500);
+            Thread.Sleep(100);
 
-            textBox1.Clear();
-            textBox2.Clear();
+            NameInput.Clear();
+            TimeInput.Clear();
             i++;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void startProcessing(object sender, EventArgs e)
         {
-            listBox1.Items.Clear();
-            if (comboBox1.SelectedIndex == 0)
+            Screen.Items.Clear();
+            label1.Text = "Working...";
+
+
+            if (jobs.Count < 1)
+            {
+                throw new Exception("No Works Added");
+            }
+
+            if (SchedulingSelector.SelectedIndex == 0)
             {
                 firstcomefirstserved();
+                label1.Text = "All Process Compleated";
             }
-            else if (comboBox1.SelectedIndex == 1)
+            else if (SchedulingSelector.SelectedIndex == 1)
             {
                 shortestJobFirst();
+                label1.Text = "All Process Compleated";
             }
-            else if (comboBox1.SelectedIndex == 2)
+            else if (SchedulingSelector.SelectedIndex == 2)
             {
                 roundRobin();
+                label1.Text = "All Process Compleated";
             }
             else
             {
+                label1.Text = "ERROR";
                 throw new Exception("metti una politica");
+
             }
 
 
@@ -79,23 +86,39 @@ namespace Scheduling
 
         private void firstcomefirstserved()
         {
-            listBox1.Cursor = Cursors.WaitCursor;
+            Screen.Cursor = Cursors.WaitCursor;
+            int executionFinalTime = 0;
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                executionFinalTime += jobs[i].getTime();
+            }
+            ProgressBar.Maximum = executionFinalTime;
+
             foreach (Job job in jobs)
             {
-                listBox1.Items.Add(job.ToString() + "  Executed");
+                ProgressBar.Step = job.getTime();
+                Screen.Items.Add(job.ToString() + "  Executed");
+                Application.DoEvents();
+                Thread.Sleep(job.getTime());
+                ProgressBar.PerformStep();
             }
             jobs.Clear();
-            listBox1.Cursor = Cursors.Default;
+            Screen.Cursor = Cursors.Default;
         }
-
-
 
         private void shortestJobFirst()
         {
-            listBox1.Cursor = Cursors.WaitCursor;
+            int executionFinalTime = 0;
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                executionFinalTime += jobs[i].getTime();
+            }
+            ProgressBar.Maximum = executionFinalTime;
+
+            Screen.Cursor = Cursors.WaitCursor;
             while (jobs.Count > 0)
             {
-                
+
                 int minTime = int.MaxValue;
                 int minIndex = -1;
                 for (int i = 0; i < jobs.Count; i++)
@@ -106,84 +129,94 @@ namespace Scheduling
                         minIndex = i;
 
                     }
-                    
+
                 }
-                listBox1.Items.Add(jobs[minIndex].ToString() + "  Executed");
-                    jobs.RemoveAt(minIndex);
+                ProgressBar.Step = jobs[minIndex].getTime();
+                Application.DoEvents();
+                Thread.Sleep(jobs[minIndex].getTime());
+                Screen.Items.Add(jobs[minIndex].ToString() + "  Executed");
+
+                ProgressBar.PerformStep();
+                jobs.RemoveAt(minIndex);
 
 
             }
-            listBox1.Cursor = Cursors.Default;
+            Screen.Cursor = Cursors.Default;
         }
-
 
         private void roundRobin()
         {
-            
-            listBox1.Cursor = Cursors.WaitCursor;
-            
+
+            Screen.Cursor = Cursors.WaitCursor;
+
             int sliceTempo = 20;
             Queue<Job> readyQueue = new Queue<Job>(jobs);
             int sliceCounter = 0;
             int executionFinalTime = 0;
-            for (int i = 0;i < jobs.Count;i++)
+            for (int i = 0; i < jobs.Count; i++)
             {
                 executionFinalTime += jobs[i].getTime();
             }
-            progressBar1.Maximum = executionFinalTime;
-            progressBar1.Step = 20;
-            while (readyQueue.Count > 0)
+            ProgressBar.Maximum = executionFinalTime;
+            ProgressBar.Step = 20;
+            if (jobs.Count > 1)
             {
-                
-                Job currentJob = readyQueue.Dequeue();
-                listBox1.Items.Add(currentJob.ToString() + "  Started");
-                int executionTime = Math.Min(sliceTempo, currentJob.getTime());
-
-
-                
-                int remainingTime = currentJob.getTime() - executionTime;
-
-                if (remainingTime > 0)
+                while (readyQueue.Count > 0)
                 {
-                    currentJob.setTime(remainingTime);
-                    readyQueue.Enqueue(currentJob);
-                    listBox1.Items.Add(currentJob.ToString() + "  Stopped");
 
+                    Job currentJob = readyQueue.Dequeue();
+                    Screen.Items.Add(currentJob.ToString() + "  Started");
+                    int executionTime = Math.Min(sliceTempo, currentJob.getTime());
+
+
+
+                    int remainingTime = currentJob.getTime() - executionTime;
+
+                    if (remainingTime > 0)
+                    {
+                        currentJob.setTime(remainingTime);
+                        readyQueue.Enqueue(currentJob);
+                        Screen.Items.Add(currentJob.ToString() + "  Stopped");
+
+                    }
+                    else
+                    {
+                        currentJob.setTime(0);
+                        Screen.Items.Add(currentJob.ToString() + "  Executed");
+                    }
+
+                    Application.DoEvents();
+                    Thread.Sleep(20);
+                    sliceCounter++;
+                    ProgressBar.PerformStep();
                 }
-                else
-                {
-                    currentJob.setTime(0);
-                    listBox1.Items.Add(currentJob.ToString() + "  Executed");
-                }
-                
-                Application.DoEvents();
-              Thread.Sleep(20);
-              sliceCounter++;
-              progressBar1.PerformStep();
+
+                Screen.Items.Add("ALL PROCESS COMPLEATED IN " + sliceCounter + " SLICE");
+                Screen.Cursor = Cursors.Default;
             }
-
-            listBox1.Items.Add("ALL PROCESS COMPLEATED IN " + sliceCounter + " SLICE");
-            listBox1.Cursor = Cursors.Default;
+            else if (jobs.Count == 1)
+            {
+                Screen.Items.Add(jobs[0].ToString() + "  Executed");
+            }
         }
 
-        public bool firstclicked = false;
+        public bool firstclicked = false; 
         public bool secondclicked = false;
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void textResetName(object sender, EventArgs e)
         {
             if (!firstclicked)
             {
-                textBox1.Text = "";
+                NameInput.Text = "";
                 firstclicked = true;
             }
 
         }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
+        private void textResetTime(object sender, EventArgs e)
         {
             if (!secondclicked)
             {
-                textBox2.Text = "";
+                TimeInput.Text = "";
                 secondclicked = true;
             }
         }
