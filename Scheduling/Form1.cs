@@ -12,7 +12,7 @@ namespace Scheduling
 
         byte i = 0;
         List<Job> jobs = new List<Job>();
-
+        List<Job> backupJobs = new List<Job>();
 
 
         public Form1()
@@ -27,7 +27,7 @@ namespace Scheduling
             try
             {
                 jobs.Add(new Job(NameInput.Text, ExtensionSelector.SelectedItem.ToString(), Convert.ToInt16(TimeInput.Text)));
-
+                
 
             }
             catch
@@ -51,7 +51,6 @@ namespace Scheduling
             Screen.Items.Clear();
             label1.Text = "Working...";
 
-
             if (jobs.Count < 1)
             {
                 throw new Exception("No Works Added");
@@ -61,21 +60,25 @@ namespace Scheduling
             {
                 firstcomefirstserved();
                 label1.Text = "All Process Compleated";
+                
             }
             else if (SchedulingSelector.SelectedIndex == 1)
             {
                 shortestJobFirst();
                 label1.Text = "All Process Compleated";
+                
             }
             else if (SchedulingSelector.SelectedIndex == 2)
             {
                 roundRobin();
                 label1.Text = "All Process Compleated";
+                 
             }
             else if (SchedulingSelector.SelectedIndex == 3)
             {
                 limitedRoundRobin();
                 label1.Text = "All Process Compleated";
+                
             }
             else
             {
@@ -103,12 +106,17 @@ namespace Scheduling
             {
                 ProgressBar.Step = job.getTime();
                 Screen.Items.Add(job.ToString() + "  Executed");
+                job.setTournAroundTime(executionFinalTime - job.getTime());
                 Application.DoEvents();
                 Thread.Sleep(job.getTime());
                 ProgressBar.PerformStep();
+
             }
+            backupJobs = jobs;
             jobs.Clear();
             Screen.Cursor = Cursors.Default;
+            button3.Visible = true;
+
         }
 
         private void shortestJobFirst()
@@ -121,6 +129,7 @@ namespace Scheduling
             ProgressBar.Maximum = executionFinalTime;
 
             Screen.Cursor = Cursors.WaitCursor;
+            backupJobs = jobs;
             while (jobs.Count > 0)
             {
 
@@ -137,6 +146,7 @@ namespace Scheduling
 
                 }
                 ProgressBar.Step = jobs[minIndex].getTime();
+                jobs[minIndex].setTournAroundTime(executionFinalTime - jobs[minIndex].getTime());
                 Application.DoEvents();
                 Thread.Sleep(jobs[minIndex].getTime());
                 Screen.Items.Add(jobs[minIndex].ToString() + "  Executed");
@@ -147,6 +157,7 @@ namespace Scheduling
 
             }
             Screen.Cursor = Cursors.Default;
+            button3.Visible = true;
         }
 
         private void roundRobin()
@@ -161,7 +172,14 @@ namespace Scheduling
             for (int i = 0; i < jobs.Count; i++)
             {
                 executionFinalTime += jobs[i].getTime();
+
             }
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                jobs[i].setTournAroundTime(executionFinalTime - (double)jobs[i].getTime());
+                jobs[i].setWaitingTime(jobs[i].getTournAroundTime() - (double)jobs[i].getTime());
+            }
+            backupJobs = jobs;
             ProgressBar.Maximum = executionFinalTime;
             ProgressBar.Step = 20;
             if (jobs.Count > 1)
@@ -173,6 +191,7 @@ namespace Scheduling
                     Screen.Items.Add(currentJob.ToString() + "  Started");
                     int executionTime = Math.Min(sliceTempo, currentJob.getTime());
 
+                    
 
 
                     int remainingTime = currentJob.getTime() - executionTime;
@@ -197,12 +216,14 @@ namespace Scheduling
                 }
 
                 Screen.Items.Add("ALL PROCESS COMPLEATED IN " + sliceCounter + " SLICE");
-                Screen.Cursor = Cursors.Default;
+                
             }
             else if (jobs.Count == 1)
             {
                 Screen.Items.Add(jobs[0].ToString() + "  Executed");
             }
+            Screen.Cursor = Cursors.Default;
+            button3.Visible = true;
         }
 
         private void limitedRoundRobin()
@@ -220,7 +241,12 @@ namespace Scheduling
             {
                 executionFinalTime += jobs[i].getTime();
             }
-
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                jobs[i].setTournAroundTime(executionFinalTime - (double)jobs[i].getTime());
+                jobs[i].setWaitingTime(jobs[i].getTournAroundTime() - (double)jobs[i].getTime());
+            }
+            backupJobs = jobs;
             ProgressBar.Maximum = executionFinalTime;
             ProgressBar.Step = 20;
 
@@ -277,11 +303,14 @@ namespace Scheduling
 
             Screen.Items.Add("ALL PROCESS COMPLEATED IN " + sliceCounter + " SLICE");
             Screen.Cursor = Cursors.Default;
+            button3.Visible = true;
         }
 
         public bool firstclicked = false; 
         public bool secondclicked = false;
         public bool thirdclicked = false;
+
+       
 
         private void textResetName(object sender, EventArgs e)
         {
@@ -314,6 +343,27 @@ namespace Scheduling
         {
             if(SchedulingSelector.SelectedIndex == 3) { maxTimeSlices.Visible = true; }
             else { maxTimeSlices.Visible = false; }
+        }
+
+        private void getMetrics(object sender, EventArgs e)
+        {
+            double mediumWaitingTime = 0;
+            double mediumTournAroundTime = 0;
+
+            foreach (Job job in backupJobs)
+            {
+                mediumTournAroundTime += job.getTournAroundTime();
+                mediumWaitingTime += job.getWaitingTime();
+            }
+
+            mediumTournAroundTime /= backupJobs.Count;
+
+            mediumWaitingTime /= backupJobs.Count;
+
+            Screen.Items.Clear();
+
+            Screen.Items.Add($"medium tournauround time: {mediumTournAroundTime}");
+            Screen.Items.Add($"medium waiting time: {mediumWaitingTime}");
         }
     }
 }

@@ -39,6 +39,7 @@
             this.Screen = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.maxTimeSlices = new System.Windows.Forms.TextBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -105,7 +106,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(160, 33);
             this.button2.TabIndex = 7;
-            this.button2.Text = "esegui";
+            this.button2.Text = "Esegui";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.startProcessing);
             // 
@@ -184,12 +185,24 @@
             this.maxTimeSlices.Visible = false;
             this.maxTimeSlices.TextChanged += new System.EventHandler(this.SlicesTextClicked);
             // 
+            // button3
+            // 
+            this.button3.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(554, 219);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(120, 33);
+            this.button3.TabIndex = 15;
+            this.button3.Text = "Get Metrics";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.getMetrics);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1159, 672);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.maxTimeSlices);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Screen);
@@ -219,6 +232,7 @@
         private System.Windows.Forms.ListBox Screen;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox maxTimeSlices;
+        private System.Windows.Forms.Button button3;
     }
 }
 
