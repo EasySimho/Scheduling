@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -26,17 +27,15 @@ namespace Scheduling
         {
             try
             {
-                jobs.Add(new Job(NameInput.Text, ExtensionSelector.SelectedItem.ToString(), Convert.ToInt16(TimeInput.Text)));
+
+                if (string.IsNullOrWhiteSpace(NameInput.Text)||ExtensionSelector.SelectedItem == null || string.IsNullOrWhiteSpace(TimeInput.Text))
+                {
+                    throw new Exception("Invalid Job Paremater");
+                }
                 
-
-            }
-            catch
-            {
-                throw new Exception("Check Job's Parameters");
-            }
-
-
-            Screen.Items.Add(i + " || " + jobs[i].ToString());
+                 jobs.Add(new Job(NameInput.Text, ExtensionSelector.SelectedItem.ToString(), Convert.ToInt16(TimeInput.Text)));
+                
+                  Screen.Items.Add(i + " || " + jobs[i].ToString());
 
             Application.DoEvents();
             Thread.Sleep(100);
@@ -44,49 +43,60 @@ namespace Scheduling
             NameInput.Clear();
             TimeInput.Clear();
             i++;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error adding job: " + ex.Message , "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void startProcessing(object sender, EventArgs e)
         {
-            Screen.Items.Clear();
-            label1.Text = "Working...";
+            try
+            {
+                Screen.Items.Clear();
+                label1.Text = "Working...";
 
-            if (jobs.Count < 1)
-            {
-                throw new Exception("No Works Added");
-            }
+                if (jobs.Count < 1)
+                {
+                    throw new Exception("No Works Added");
+                }
 
-            if (SchedulingSelector.SelectedIndex == 0)
-            {
-                firstcomefirstserved();
-                label1.Text = "All Process Compleated";
-                
-            }
-            else if (SchedulingSelector.SelectedIndex == 1)
-            {
-                shortestJobFirst();
-                label1.Text = "All Process Compleated";
-                
-            }
-            else if (SchedulingSelector.SelectedIndex == 2)
-            {
-                roundRobin();
-                label1.Text = "All Process Compleated";
-                 
-            }
-            else if (SchedulingSelector.SelectedIndex == 3)
-            {
-                limitedRoundRobin();
-                label1.Text = "All Process Compleated";
-                
-            }
-            else
-            {
-                label1.Text = "ERROR";
-                throw new Exception("Select a Politic");
+                if (SchedulingSelector.SelectedIndex == 0)
+                {
+                    firstcomefirstserved();
+                    label1.Text = "All Process Compleated";
 
-            }
+                }
+                else if (SchedulingSelector.SelectedIndex == 1)
+                {
+                    shortestJobFirst();
+                    label1.Text = "All Process Compleated";
 
+                }
+                else if (SchedulingSelector.SelectedIndex == 2)
+                {
+                    roundRobin();
+                    label1.Text = "All Process Compleated";
+
+                }
+                else if (SchedulingSelector.SelectedIndex == 3)
+                {
+                    limitedRoundRobin();
+                    label1.Text = "All Process Compleated";
+
+                }
+                else
+                {
+                    label1.Text = "ERROR";
+                    throw new Exception("Select a Politic");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error starting process: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
 
 
@@ -116,6 +126,7 @@ namespace Scheduling
             jobs.Clear();
             Screen.Cursor = Cursors.Default;
             ShowMetricsButton.Visible = true;
+            MessageBox.Show($"Work Compleated", "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
 
@@ -158,6 +169,7 @@ namespace Scheduling
             }
             Screen.Cursor = Cursors.Default;
             ShowMetricsButton.Visible = true;
+            MessageBox.Show($"Work Compleated", "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void roundRobin()
@@ -225,6 +237,7 @@ namespace Scheduling
             }
             Screen.Cursor = Cursors.Default;
             ShowMetricsButton.Visible = true;
+            MessageBox.Show($"Work Compleated in {sliceCounter}", "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void limitedRoundRobin()
@@ -305,6 +318,7 @@ namespace Scheduling
             Screen.Items.Add("ALL PROCESS COMPLEATED IN " + sliceCounter + " SLICE");
             Screen.Cursor = Cursors.Default;
             ShowMetricsButton.Visible = true;
+            MessageBox.Show($"Work Compleated in {sliceCounter}", "Completed" ,MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public bool firstclicked = false; 
@@ -348,23 +362,36 @@ namespace Scheduling
 
         private void getMetrics(object sender, EventArgs e)
         {
+            
             double mediumWaitingTime = 0;
             double mediumTournAroundTime = 0;
-
-            foreach (Job job in backupJobs)
+            try
             {
-                mediumTournAroundTime += job.getTournAroundTime();
-                mediumWaitingTime += job.getWaitingTime();
+
+                if (backupJobs.Count == 0)
+                {
+                    throw new Exception("Job backup corupted");
+                }
+
+                foreach (Job job in backupJobs)
+                {
+                    mediumTournAroundTime += job.getTournAroundTime();
+                    mediumWaitingTime += job.getWaitingTime();
+                }
+
+                mediumTournAroundTime /= backupJobs.Count;
+
+                mediumWaitingTime /= backupJobs.Count;
+
+                Screen.Items.Clear();
+
+                Screen.Items.Add($"medium tournauround time: {mediumTournAroundTime}");
+                Screen.Items.Add($"medium waiting time: {mediumWaitingTime}");
             }
-
-            mediumTournAroundTime /= backupJobs.Count;
-
-            mediumWaitingTime /= backupJobs.Count;
-
-            Screen.Items.Clear();
-
-            Screen.Items.Add($"medium tournauround time: {mediumTournAroundTime}");
-            Screen.Items.Add($"medium waiting time: {mediumWaitingTime}");
+            catch(Exception ex )
+            {
+                MessageBox.Show("Error showinf metrics: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         
