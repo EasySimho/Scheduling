@@ -16,44 +16,97 @@ namespace Scheduling
         List<Job> backupJobs = new List<Job>();
 
 
+
         public Scheduling()
         {
             InitializeComponent();
         }
 
 
-        
+        #region job listing
         private void addJob(object sender, EventArgs e)
         {
             try
             {
 
-                if (string.IsNullOrWhiteSpace(NameInput.Text)||ExtensionSelector.SelectedItem == null || string.IsNullOrWhiteSpace(TimeInput.Text))
+                if (string.IsNullOrWhiteSpace(NameInput.Text) || ExtensionSelector.SelectedItem == null || string.IsNullOrWhiteSpace(TimeInput.Text))
                 {
                     throw new Exception("Invalid Job Paremater");
                 }
-                
-                 jobs.Add(new Job(NameInput.Text, ExtensionSelector.SelectedItem.ToString(), Convert.ToInt16(TimeInput.Text)));
-                
-                  Screen.Items.Add(i + " || " + jobs[i].ToString());
 
-            Application.DoEvents();
-            Thread.Sleep(100);
+                jobs.Add(new Job(NameInput.Text, ExtensionSelector.SelectedItem.ToString(), Convert.ToInt16(TimeInput.Text)));
 
-            NameInput.Clear();
-            TimeInput.Clear();
-            i++;
+                Screen.Items.Add(i + " || " + jobs[i].ToString());
+
+                Application.DoEvents();
+                Thread.Sleep(100);
+
+                NameInput.Clear();
+                TimeInput.Clear();
+                i++;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error adding job: " + ex.Message , "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error adding job: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        #endregion
+
+        #region metrics
+        private void getMetrics(object sender, EventArgs e)
+        {
+
+            double mediumWaitingTime = 0;
+            double mediumTournAroundTime = 0;
+            int executionFinalTime = 0;
+            foreach (Job job in backupJobs)
+            {
+                executionFinalTime += job.getTime();
+            }
+            foreach (Job job in backupJobs)
+            {
+                job.setTournAroundTime(executionFinalTime);
+                job.setWaitingTime(job.getTournAroundTime() - (double)job.getTime());
+            }
+            try
+            {
+
+                if (backupJobs.Count == 0)
+                {
+                    throw new Exception("Job backup corupted");
+                }
+
+                foreach (Job job in backupJobs)
+                {
+                    mediumTournAroundTime += job.getTournAroundTime();
+                    mediumWaitingTime += job.getWaitingTime();
+                }
+
+                mediumTournAroundTime /= backupJobs.Count;
+                mediumWaitingTime /= backupJobs.Count;
+                Screen.Items.Clear();
+                Screen.Items.Add($"medium tournauround time: {mediumTournAroundTime}");
+                Screen.Items.Add($"medium waiting time: {mediumWaitingTime}");
+
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error showinf metrics: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        #endregion
+
+        #region start
         private void startProcessing(object sender, EventArgs e)
         {
             try
             {
+                foreach (Job job in jobs)
+                {
+                    backupJobs.Add(new Job(job.getName(), job.getFilext(), job.getTime()));
+                }
                 Screen.Items.Clear();
                 label1.Text = "Working...";
 
@@ -82,6 +135,7 @@ namespace Scheduling
                 }
                 else if (SchedulingSelector.SelectedIndex == 3)
                 {
+
                     limitedRoundRobin();
                     label1.Text = "All Process Compleated";
 
@@ -98,10 +152,11 @@ namespace Scheduling
                 MessageBox.Show("Error starting process: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-
-
         }
 
+        #endregion
+
+        #region scheduling mode
         private void firstcomefirstserved()
         {
             Screen.Cursor = Cursors.WaitCursor;
@@ -116,13 +171,12 @@ namespace Scheduling
             {
                 ProgressBar.Step = job.getTime();
                 Screen.Items.Add(job.ToString() + "  Executed");
-                job.setTournAroundTime(executionFinalTime - job.getTime());
+
                 Application.DoEvents();
                 Thread.Sleep(job.getTime());
                 ProgressBar.PerformStep();
 
             }
-            backupJobs = jobs;
             jobs.Clear();
             Screen.Cursor = Cursors.Default;
             ShowMetricsButton.Visible = true;
@@ -140,7 +194,7 @@ namespace Scheduling
             ProgressBar.Maximum = executionFinalTime;
 
             Screen.Cursor = Cursors.WaitCursor;
-            backupJobs = jobs;
+
             while (jobs.Count > 0)
             {
 
@@ -157,7 +211,6 @@ namespace Scheduling
 
                 }
                 ProgressBar.Step = jobs[minIndex].getTime();
-                jobs[minIndex].setTournAroundTime(executionFinalTime - jobs[minIndex].getTime());
                 Application.DoEvents();
                 Thread.Sleep(jobs[minIndex].getTime());
                 Screen.Items.Add(jobs[minIndex].ToString() + "  Executed");
@@ -186,12 +239,6 @@ namespace Scheduling
                 executionFinalTime += jobs[i].getTime();
 
             }
-            for (int i = 0; i < jobs.Count; i++)
-            {
-                jobs[i].setTournAroundTime(executionFinalTime - (double)jobs[i].getTime());
-                jobs[i].setWaitingTime(jobs[i].getTournAroundTime() - (double)jobs[i].getTime());
-            }
-            backupJobs = jobs;
             ProgressBar.Maximum = executionFinalTime;
             ProgressBar.Step = 20;
             if (jobs.Count > 1)
@@ -203,7 +250,7 @@ namespace Scheduling
                     Screen.Items.Add(currentJob.ToString() + "  Started");
                     int executionTime = Math.Min(sliceTempo, currentJob.getTime());
 
-                    
+
 
 
                     int remainingTime = currentJob.getTime() - executionTime;
@@ -229,7 +276,7 @@ namespace Scheduling
                 }
 
                 Screen.Items.Add("ALL PROCESS COMPLEATED IN " + sliceCounter + " SLICE");
-                
+
             }
             else if (jobs.Count == 1)
             {
@@ -255,35 +302,29 @@ namespace Scheduling
             {
                 executionFinalTime += jobs[i].getTime();
             }
-            for (int i = 0; i < jobs.Count; i++)
-            {
-                jobs[i].setTournAroundTime(executionFinalTime - (double)jobs[i].getTime());
-                jobs[i].setWaitingTime(jobs[i].getTournAroundTime() - (double)jobs[i].getTime());
-            }
-            backupJobs = jobs;
             ProgressBar.Maximum = executionFinalTime;
             ProgressBar.Step = 20;
 
-            while (readyQueue.Count > 0 || waitingQueue.Count > 0) 
+            while (readyQueue.Count > 0 || waitingQueue.Count > 0)
             {
                 if (readyQueue.Count > 0)
                 {
                     Job currentJob = readyQueue.Dequeue();
                     Screen.Items.Add(currentJob.ToString() + " Started");
 
-                    
+
 
                     int executionTime = Math.Min(sliceTempo, currentJob.getTime());
                     int remainingTime = currentJob.getTime() - executionTime;
                     int jobslices = remainingTime / 20;
                     if (remainingTime > 0)
                     {
-                        
+
                         currentJob.usedSlices++;
 
                         if (currentJob.usedSlices < maxSlicesPerJob)
                         {
-                            
+
                             currentJob.setTime(remainingTime);
                             readyQueue.Enqueue(currentJob);
                         }
@@ -301,7 +342,7 @@ namespace Scheduling
                         Screen.Items.Add(currentJob.ToString() + " Executed");
                     }
                 }
-                else 
+                else
                 {
                     if (waitingQueue.Count > 0)
                     {
@@ -318,14 +359,16 @@ namespace Scheduling
             Screen.Items.Add("ALL PROCESS COMPLEATED IN " + sliceCounter + " SLICE");
             Screen.Cursor = Cursors.Default;
             ShowMetricsButton.Visible = true;
-            MessageBox.Show($"Work Compleated in {sliceCounter}", "Completed" ,MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Work Compleated in {sliceCounter} time slices", "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+        #endregion
 
-        public bool firstclicked = false; 
+        #region UI function
+        public bool firstclicked = false;
         public bool secondclicked = false;
         public bool thirdclicked = false;
 
-       
+
 
         private void textResetName(object sender, EventArgs e)
         {
@@ -356,45 +399,9 @@ namespace Scheduling
 
         private void maxSlicesVisibility(object sender, EventArgs e)
         {
-            if(SchedulingSelector.SelectedIndex == 3) { maxTimeSlices.Visible = true; }
+            if (SchedulingSelector.SelectedIndex == 3) { maxTimeSlices.Visible = true; }
             else { maxTimeSlices.Visible = false; }
         }
-
-        private void getMetrics(object sender, EventArgs e)
-        {
-            
-            double mediumWaitingTime = 0;
-            double mediumTournAroundTime = 0;
-            try
-            {
-
-                if (backupJobs.Count == 0)
-                {
-                    throw new Exception("Job backup corupted");
-                }
-
-                foreach (Job job in backupJobs)
-                {
-                    mediumTournAroundTime += job.getTournAroundTime();
-                    mediumWaitingTime += job.getWaitingTime();
-                }
-
-                mediumTournAroundTime /= backupJobs.Count;
-
-                mediumWaitingTime /= backupJobs.Count;
-
-                Screen.Items.Clear();
-
-                Screen.Items.Add($"medium tournauround time: {mediumTournAroundTime}");
-                Screen.Items.Add($"medium waiting time: {mediumWaitingTime}");
-            }
-            catch(Exception ex )
-            {
-                MessageBox.Show("Error showinf metrics: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        
-
+    #endregion
     }
 }

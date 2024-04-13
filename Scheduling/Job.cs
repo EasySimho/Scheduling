@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace Scheduling
 {
@@ -30,8 +31,17 @@ namespace Scheduling
 
         public int getTime()
         {
-            this._time = _time;
             return _time;
+        }
+
+        public string getFilext() 
+        { 
+            return _filext;
+        }
+
+        public string getName()
+        {
+            return _id;
         }
 
         public void setTime(int remainingTime)
