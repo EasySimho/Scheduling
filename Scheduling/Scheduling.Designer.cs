@@ -204,7 +204,7 @@
             this.maxTimeSlices.BackColor = System.Drawing.SystemColors.Control;
             this.maxTimeSlices.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.maxTimeSlices.Font = new System.Drawing.Font("Arial", 10.75F);
-            this.maxTimeSlices.Location = new System.Drawing.Point(271, 107);
+            this.maxTimeSlices.Location = new System.Drawing.Point(271, 109);
             this.maxTimeSlices.MinimumSize = new System.Drawing.Size(4, 26);
             this.maxTimeSlices.Name = "maxTimeSlices";
             this.maxTimeSlices.Size = new System.Drawing.Size(263, 26);

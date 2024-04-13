@@ -16,7 +16,6 @@ namespace Scheduling
         List<Job> backupJobs = new List<Job>();
 
 
-
         public Scheduling()
         {
             InitializeComponent();
@@ -55,7 +54,6 @@ namespace Scheduling
         #region metrics
         private void getMetrics(object sender, EventArgs e)
         {
-
             double mediumWaitingTime = 0;
             double mediumTournAroundTime = 0;
             int executionFinalTime = 0;
@@ -171,6 +169,7 @@ namespace Scheduling
             {
                 ProgressBar.Step = job.getTime();
                 Screen.Items.Add(job.ToString() + "  Executed");
+                Screen.TopIndex = Screen.Items.Count - 1;
 
                 Application.DoEvents();
                 Thread.Sleep(job.getTime());
@@ -214,6 +213,7 @@ namespace Scheduling
                 Application.DoEvents();
                 Thread.Sleep(jobs[minIndex].getTime());
                 Screen.Items.Add(jobs[minIndex].ToString() + "  Executed");
+                Screen.TopIndex = Screen.Items.Count - 1;
 
                 ProgressBar.PerformStep();
                 jobs.RemoveAt(minIndex);
@@ -248,6 +248,7 @@ namespace Scheduling
 
                     Job currentJob = readyQueue.Dequeue();
                     Screen.Items.Add(currentJob.ToString() + "  Started");
+                    Screen.TopIndex = Screen.Items.Count - 1;
                     int executionTime = Math.Min(sliceTempo, currentJob.getTime());
 
 
@@ -260,12 +261,14 @@ namespace Scheduling
                         currentJob.setTime(remainingTime);
                         readyQueue.Enqueue(currentJob);
                         Screen.Items.Add(currentJob.ToString() + "  Stopped");
+                        Screen.TopIndex = Screen.Items.Count - 1;
 
                     }
                     else
                     {
                         currentJob.setTime(0);
                         Screen.Items.Add(currentJob.ToString() + "  Executed");
+                        Screen.TopIndex = Screen.Items.Count - 1;
                         jobs.Remove(currentJob);
                     }
 
@@ -281,6 +284,7 @@ namespace Scheduling
             else if (jobs.Count == 1)
             {
                 Screen.Items.Add(jobs[0].ToString() + "  Executed");
+                Screen.TopIndex = Screen.Items.Count - 1;
             }
             Screen.Cursor = Cursors.Default;
             ShowMetricsButton.Visible = true;
@@ -311,6 +315,7 @@ namespace Scheduling
                 {
                     Job currentJob = readyQueue.Dequeue();
                     Screen.Items.Add(currentJob.ToString() + " Started");
+                    Screen.TopIndex = Screen.Items.Count - 1;
 
 
 
@@ -335,11 +340,13 @@ namespace Scheduling
                         }
 
                         Screen.Items.Add(currentJob.ToString() + " Stopped (" + jobslices + " slices remaining)");
+                        Screen.TopIndex = Screen.Items.Count - 1;
                     }
                     else
                     {
                         currentJob.setTime(0);
                         Screen.Items.Add(currentJob.ToString() + " Executed");
+                        Screen.TopIndex = Screen.Items.Count - 1;
                     }
                 }
                 else
