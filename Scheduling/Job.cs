@@ -59,5 +59,7 @@ namespace Scheduling
         {
              this.tournAroundTime = tournAroundTime;
         }
+
+        //Fixed
     }
 }
