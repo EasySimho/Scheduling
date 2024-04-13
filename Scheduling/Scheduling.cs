@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace Scheduling
 {
 
-    public partial class Form1 : Form
+    public partial class Scheduling : Form
     {
 
         byte i = 0;
@@ -15,7 +15,7 @@ namespace Scheduling
         List<Job> backupJobs = new List<Job>();
 
 
-        public Form1()
+        public Scheduling()
         {
             InitializeComponent();
         }
@@ -115,7 +115,7 @@ namespace Scheduling
             backupJobs = jobs;
             jobs.Clear();
             Screen.Cursor = Cursors.Default;
-            button3.Visible = true;
+            ShowMetricsButton.Visible = true;
 
         }
 
@@ -157,7 +157,7 @@ namespace Scheduling
 
             }
             Screen.Cursor = Cursors.Default;
-            button3.Visible = true;
+            ShowMetricsButton.Visible = true;
         }
 
         private void roundRobin()
@@ -207,6 +207,7 @@ namespace Scheduling
                     {
                         currentJob.setTime(0);
                         Screen.Items.Add(currentJob.ToString() + "  Executed");
+                        jobs.Remove(currentJob);
                     }
 
                     Application.DoEvents();
@@ -223,7 +224,7 @@ namespace Scheduling
                 Screen.Items.Add(jobs[0].ToString() + "  Executed");
             }
             Screen.Cursor = Cursors.Default;
-            button3.Visible = true;
+            ShowMetricsButton.Visible = true;
         }
 
         private void limitedRoundRobin()
@@ -303,7 +304,7 @@ namespace Scheduling
 
             Screen.Items.Add("ALL PROCESS COMPLEATED IN " + sliceCounter + " SLICE");
             Screen.Cursor = Cursors.Default;
-            button3.Visible = true;
+            ShowMetricsButton.Visible = true;
         }
 
         public bool firstclicked = false; 
@@ -365,5 +366,8 @@ namespace Scheduling
             Screen.Items.Add($"medium tournauround time: {mediumTournAroundTime}");
             Screen.Items.Add($"medium waiting time: {mediumWaitingTime}");
         }
+
+        
+
     }
 }
