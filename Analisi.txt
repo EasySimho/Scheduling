@@ -1,0 +1,40 @@
+Questo codice mostra diverse funzioni progettate per simulare diversi algoritmi di scheduling di processi (jobs). Ogni funzione gestisce un insieme di jobs, ognuno dei quali ha un tempo di esecuzione, e li esegue secondo un determinato algoritmo di scheduling: First-Come, First-Served (FCFS), Shortest Job First (SJF), Round Robin (RR) e un Round Robin Limitato. Qui sotto è riportata un'analisi tecnica di ciascuna funzione.
+
+### Analisi della Funzione `firstcomefirstserved()`
+
+Questa funzione implementa l'algoritmo di scheduling FCFS dove il primo job nella coda è il primo ad essere eseguito fino al suo completamento. Questo metodo calcola il tempo totale di esecuzione, configura la ProgressBar, quindi esegue ogni job sequenzialmente. I jobs sono rappresentati come oggetti che possiedono un metodo `getTime()` per recuperare il loro tempo di esecuzione.
+
+**Punti chiave**:
+- Utilizzo della `ProgressBar` per indicare il progresso dell'esecuzione.
+- Imposta un cursore di attesa all'inizio e lo ripristina al valore predefinito alla fine.
+- Esegue un aggiornamento dell'interfaccia utente tramite `Application.DoEvents()` e `Thread.Sleep()`.
+- Alla fine, mostra un messaggio di completamento e pulisce la lista di jobs.
+
+### Analisi della Funzione `shortestJobFirst()`
+
+Questa funzione implementa l'algoritmo SJF, dove il job con il minor tempo di esecuzione viene eseguito per primo. Anch'essa inizia calcolando il tempo totale di esecuzione e configura la `ProgressBar` di conseguenza. Successivamente, seleziona e rimuove il job con il minor tempo di esecuzione dalla lista fino a quando non sono stati eseguiti tutti i jobs.
+
+**Punti chiave**:
+- Utilizza un ciclo per trovare il job con il tempo minore di esecuzione.
+- Funzionamento simile a `firstcomefirstserved()` per quanto riguarda ProgressBar, cursori e aggiornamenti dell'interfaccia.
+
+### Analisi della Funzione `roundRobin()`
+
+Questo metodo implementa l'algoritmo di scheduling Round Robin. Il tempo di esecuzione di ciascun job viene affettato in intervalli (di solito piccoli), e i jobs sono eseguiti uno dopo l'altro per un singolo intervallo di tempo. Questo continua fino a quando tutti i jobs non sono completati.
+
+**Punti chiave**:
+- Utilizza una coda (`Queue`) per gestire i jobs pronti.
+- Esegue ciascun job per un intervallo di tempo fisso (`sliceTempo`), quindi controlla se il job deve essere riaccodato.
+- Gestisce jobs completati e parzialmente completati con logica differente.
+- Il progresso è mostrato attraverso la `ProgressBar`.
+
+### Analisi della Funzione `limitedRoundRobin()`
+
+Simile al Round Robin regolare, ma con un limite al numero di "fette" (slices) che un job può ricevere prima di essere spostato in una coda di attesa. Questo aiuta a prevenire il fenomeno dello "starving" di alcuni jobs.
+
+**Punti chiave**:
+- Implementa due code, una per i jobs pronti (`readyQueue`) e una per i jobs in attesa (`waitingQueue`).
+- Utilizza un contatore di "fette" (`usedSlices`) per tenere traccia di quante volte un job è stato processato.
+- Alterna tra le due code per garantire una certa equità nel tempo di esecuzione assegnato a ciascun job.
+
+**Conclusioni Generali**: Il codice è ben strutturato per dimostrare vari algoritmi di scheduling, ma presenta alcune aree di potenziale miglioramento, come la gestione delle eccezioni e la modularità (per esempio, la gestione della ProgressBar potrebbe essere estratta in una funzione separata per ridurre la duplicazione del codice). Inoltre, l'uso di `Thread.Sleep()` simula il tempo di esecuzione dei jobs ma non è ideale per un'applicazione reale dove i jobs veri vengono eseguiti anziché solo simulati.
